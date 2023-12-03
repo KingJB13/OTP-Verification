@@ -18,7 +18,7 @@ try {
   }
 } catch (PDOException $e) {
   $error_log = "Error: " . $e->getMessage();
-  echo '<script>alert("' . $error_log . '"); window.location.href = "login.php";</script>';
+  echo '<script>alert("' . $error_log . '"); window.location.href = "index.php";</script>';
   exit();
 }
 
