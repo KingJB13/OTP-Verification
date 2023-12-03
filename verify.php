@@ -11,9 +11,6 @@
 
           $passwordhash = password_hash($password, PASSWORD_BCRYPT);
 
-          if(!is_int($otp)){
-            echo '<script>alert("Enter the six digit number sent from your email")</script>';
-          }
           if($otp == $originalotp){
               $sql = 'INSERT INTO user_details(id, username, email, password) VALUES (FLOOR(RAND() * (3000000 - 2000000 + 1) + 2000000), :username, :email, :password)';
               $stmt = $pdo->prepare($sql);
