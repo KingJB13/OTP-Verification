@@ -26,7 +26,7 @@ if(isset($_POST['register'])){
         $stmt->execute();
 
         if ($stmt->rowCount() > 0) {
-            $error = 'Email Already Exist';
+            echo '<script>alert("Email already Exist");</script>';
         } else {
             $_SESSION['email'] = $email;
             $_SESSION['password'] = $confirm_password;
@@ -37,8 +37,7 @@ if(isset($_POST['register'])){
             $subject = "Email verification";
             $recipient = $_SESSION['email'];
             send_mail($recipient, $subject, $message);
-
-            header("Location: verify.php");
+            echo '<script>alert("OTP Sent to your email");window.location.href = "verify.php";</script>';
             exit();
         }
     }
