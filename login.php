@@ -26,18 +26,19 @@
                       header("Location: home.php");
                       exit();
                 } else {
-                    $error = "Invalid email or password";
+                  echo '<script>alert("Invalid Password");window.location.href = "signup.php";</script>';
                 }
             } else {
-                $error = "Invalid email or password";
+              echo '<script>alert("User does not Exist");</script>';
             }
         }
       }
     }
   }
   catch(PDOException $e){
-    error_log("Error: " . $e->getMessage());
-    header("Location: index.php");
+    $error_log = "Error: " . $e->getMessage();
+    echo '<script>alert("' . $error_log . '"); window.location.href = "login.php";</script>';
+    exit();
   }
 
 ?>

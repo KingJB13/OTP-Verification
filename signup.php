@@ -1,46 +1,53 @@
 <?php
-if(isset($_POST['register'])){
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $confirm_password = $_POST['confirm-password'];
-    $user_name = $_POST['username'];
-    $emailPattern = '/^[a-zA-Z0-9._%+-]+@dhvsu\.edu\.ph$/';
-    $namePattern = '/^[A-Za-z]+(?: [A-Za-z]+)*$/';
-
-    if (strlen($password) < 8 || strlen($password) > 32) {
-      $password_error = 'Password must be 8 - 32 characters long';
-    } elseif ($password !== $confirm_password){
-      $confirmerror = 'Passwords do not match';
-    } elseif (!preg_match($namePattern, $user_name)) {
-      $usererror = 'Name should only contain letters';
-    } elseif (!preg_match($emailPattern, $email)) {
-        $error = 'Not a dhvsu account';
-    } else{
-        session_start();
-        require_once 'dbcon.php';
-        require_once 'mail.php';
-
-        $sql = "SELECT * FROM user_details WHERE email = :email";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(":email", $email);
-        $stmt->execute();
-
-        if ($stmt->rowCount() > 0) {
-            echo '<script>alert("Email already Exist");</script>';
-        } else {
-            $_SESSION['email'] = $email;
-            $_SESSION['password'] = $confirm_password;
-            $_SESSION['user_name'] = $user_name;
-            $otp = rand(100000, 999999);
-            $_SESSION['otp'] = $otp;
-            $message = "your code is " . $_SESSION['otp'];
-            $subject = "Email verification";
-            $recipient = $_SESSION['email'];
-            send_mail($recipient, $subject, $message);
-            echo '<script>alert("OTP Sent to your email");window.location.href = "verify.php";</script>';
-            exit();
-        }
-    }
+  try{
+    if(isset($_POST['register'])){
+      $email = $_POST['email'];
+      $password = $_POST['password'];
+      $confirm_password = $_POST['confirm-password'];
+      $user_name = $_POST['username'];
+      $emailPattern = '/^[a-zA-Z0-9._%+-]+@dhvsu\.edu\.ph$/';
+      $namePattern = '/^[A-Za-z]+(?: [A-Za-z]+)*$/';
+  
+      if (strlen($password) < 8 || strlen($password) > 32) {
+        $password_error = 'Password must be 8 - 32 characters long';
+      } elseif ($password !== $confirm_password){
+        $confirmerror = 'Passwords do not match';
+      } elseif (!preg_match($namePattern, $user_name)) {
+        $usererror = 'Name should only contain letters';
+      } elseif (!preg_match($emailPattern, $email)) {
+          $error = 'Not a dhvsu account';
+      } else{
+          session_start();
+          require_once 'dbcon.php';
+          require_once 'mail.php';
+  
+          $sql = "SELECT * FROM user_details WHERE email = :email";
+          $stmt = $pdo->prepare($sql);
+          $stmt->bindParam(":email", $email);
+          $stmt->execute();
+  
+          if ($stmt->rowCount() > 0) {
+              echo '<script>alert("Email already Exist");</script>';
+          } else {
+              $_SESSION['email'] = $email;
+              $_SESSION['password'] = $confirm_password;
+              $_SESSION['user_name'] = $user_name;
+              $otp = rand(100000, 999999);
+              $_SESSION['otp'] = $otp;
+              $message = "your code is " . $_SESSION['otp'];
+              $subject = "Email verification";
+              $recipient = $_SESSION['email'];
+              send_mail($recipient, $subject, $message);
+              echo '<script>alert("OTP Sent to your email");window.location.href = "verify.php";</script>';
+              exit();
+          }
+      }
+  }
+}
+catch(PDOException $e){
+  $error_log = "Error: " . $e->getMessage();
+  echo '<script>alert("' . $error_log . '"); window.location.href = "login.php";</script>';
+  exit();
 }
 ?>
 <!DOCTYPE html>

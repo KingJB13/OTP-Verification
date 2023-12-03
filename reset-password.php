@@ -17,8 +17,8 @@ try {
     echo '<script>alert("Token expired, please generate a new token.");</script>';
   }
 } catch (PDOException $e) {
-  error_log("Error: " . $e->getMessage());
-  header("Location: index.php");
+  $error_log = "Error: " . $e->getMessage();
+  echo '<script>alert("' . $error_log . '"); window.location.href = "login.php";</script>';
   exit();
 }
 

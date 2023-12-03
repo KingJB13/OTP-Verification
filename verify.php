@@ -1,38 +1,45 @@
 <?php
     session_start();
     require_once 'dbcon.php';
+    try{
+        if(isset($_POST['verify'])){
+          $otp = $_POST['otp'];
+          $email = $_SESSION['email'];
+          $password = $_SESSION['password'];
+          $user_name = $_SESSION['user_name'];
+          $originalotp = $_SESSION['otp'];
 
-    if(isset($_POST['verify'])){
-        $otp = $_POST['otp'];
-        $email = $_SESSION['email'];
-        $password = $_SESSION['password'];
-        $user_name = $_SESSION['user_name'];
-        $originalotp = $_SESSION['otp'];
+          $passwordhash = password_hash($password, PASSWORD_BCRYPT);
 
-        $passwordhash = password_hash($password, PASSWORD_BCRYPT);
+          if(!is_int($otp)){
+            echo '<script>alert("Enter the six digit number sent from your email")</script>';
+          }
+          if($otp == $originalotp){
+              $sql = 'INSERT INTO user_details(id, username, email, password) VALUES (FLOOR(RAND() * (3000000 - 2000000 + 1) + 2000000), :username, :email, :password)';
+              $stmt = $pdo->prepare($sql);
+              $stmt->bindParam(':email', $email);
+              $stmt->bindParam(':password', $passwordhash);
+              $stmt->bindParam(':username', $user_name);
 
-        if(!is_int($otp)){
-          echo '<script>alert("Enter the six digit number sent from your email")</script>';
-        }
-        if($otp == $originalotp){
-            $sql = 'INSERT INTO user_details(id, username, email, password) VALUES (FLOOR(RAND() * (3000000 - 2000000 + 1) + 2000000), :username, :email, :password)';
-            $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':password', $passwordhash);
-            $stmt->bindParam(':username', $user_name);
-
-            if($stmt->execute()){
-                echo '<script>alert("Account Created Successfully");window.location.href = "login.php";</script>';
-                exit();
-            }
-            else{
-                echo '<script>alert("Error Creating Account");</script>';
-            }
-            
-        }else {
-            echo '<script>alert("Invalid OTP");</script>';
-        }
+              if($stmt->execute()){
+                  echo '<script>alert("Account Created Successfully");window.location.href = "login.php";</script>';
+                  exit();
+              }
+              else{
+                  echo '<script>alert("Error Creating Account");</script>';
+              }
+              
+          }else {
+              echo '<script>alert("Invalid OTP");</script>';
+          }
+      }
     }
+    catch(PDOException $e){
+      $error_log = "Error: " . $e->getMessage();
+      echo '<script>alert("' . $error_log . '"); window.location.href = "login.php";</script>';
+      exit();
+    }
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">
