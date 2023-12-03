@@ -22,16 +22,15 @@
             $stmt->bindParam(':username', $user_name);
 
             if($stmt->execute()){
-                $message = 'Account Created Successfully';
-                header("Location: login.php");
+                echo '<script>alert("Account Created Successfully");window.location.href = "login.php";</script>';
                 exit();
             }
             else{
-                echo '<script>alert("Error Creating Account")</script>';
+                echo '<script>alert("Error Creating Account");</script>';
             }
             
         }else {
-            echo '<script>alert("Invalid OTP")</script>';
+            echo '<script>alert("Invalid OTP");</script>';
         }
     }
 ?>
